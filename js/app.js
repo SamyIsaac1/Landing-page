@@ -27,16 +27,21 @@
 // Using document fragment is going to reduce the number of reflows and repaints.
 const fragment = document.createDocumentFragment();
 // Selecting all sections
-const sections = document.body.querySelectorAll("section");
+let sections = document.body.querySelectorAll("section");
 // upButton variable
 const upButton = document.querySelector("button");
 // Header section
 const navSection = document.querySelector(".page__header");
 // Selection collapse anchor
 const collapse = document.querySelector("#collapse");
+// Selecting addButton
+const addButton = document.querySelector(".button");
 // A variable that will be our timer to know if the user is scrolling or not
 let isScrolling;
-
+// anchors variable so every function can use it
+let anchors;
+// sectionCount to keep track the number of sections
+let sectionCount = 0;
 /**
  * End Global Variables
  * Start Helper Functions
@@ -59,6 +64,7 @@ let isScrolling;
 let createMenu = (sections) => {
   // Looping through every section to get attributes info
   for (const section of sections) {
+    sectionCount += 1;
     // Creating a list element
     const newList = document.createElement("li");
     // Creating an anchor element
@@ -103,7 +109,7 @@ let scrollingUpdate = () => {
     if (topSpace >= -100 && topSpace < 100) {
       // Add active class to both section and the anchor
       section.classList.add('active');
-      anchor.classList.add('active');
+      if (anchor){anchor.classList.add('active');}
       // Otherwise, remove the class
     } else {
       section.classList.remove('active');
@@ -146,12 +152,81 @@ let collapsePage = () => {
   // Remove all the sections
   for (const section of sections){
     section.remove();
+    console.log(section);
   }
+  console.log(anchors)
   // Remove nav-bar menu
-  document.querySelector(".navbar__menu").remove();
+  for(const anchor of anchors){
+    anchor.remove();
+  }
+  sectionCount = 0;
   // Stratching the header section to fill the space that we removed
-  document.querySelector(".main__hero").style.height = "60vh";
   document.querySelector(".main__hero h1").textContent = "Collapsed Landing Page";
+}
+
+
+/**
+* @description creating  new menu item, new section and adding events to them
+*
+*/
+let addContent = () => {
+    document.querySelector("main").insertAdjacentHTML("beforeend",
+      `<section id="section${sectionCount+1}" data-nav="Section ${sectionCount+1}">
+        <div class="landing__container">
+          <h2>Section ${sectionCount+1}</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi fermentum metus faucibus lectus pharetra dapibus. Suspendisse potenti. Aenean aliquam elementum mi, ac euismod augue. Donec eget lacinia ex. Phasellus imperdiet porta orci eget
+            mollis. Sed convallis sollicitudin mauris ac tincidunt. Donec bibendum, nulla eget bibendum consectetur, sem nisi aliquam leo, ut pulvinar quam nunc eu augue. Pellentesque maximus imperdiet elit a pharetra. Duis lectus mi, aliquam in mi
+            quis, aliquam porttitor lacus. Morbi a tincidunt felis. Sed leo nunc, pharetra et elementum non, faucibus vitae elit. Integer nec libero venenatis libero ultricies molestie semper in tellus. Sed congue et odio sed euismod.</p>
+
+          <p>Aliquam a convallis justo. Vivamus venenatis, erat eget pulvinar gravida, ipsum lacus aliquet velit, vel luctus diam ipsum a diam. Cras eu tincidunt arcu, vitae rhoncus purus. Vestibulum fermentum consectetur porttitor. Suspendisse
+            imperdiet porttitor tortor, eget elementum tortor mollis non.</p>
+        </div>
+      </section>
+      `);
+    sectionCount += 1;
+    // Add the new section to the DOM
+    sections = document.body.querySelectorAll("section");
+    let newList = document.createElement("li");
+    // Creating an anchor element
+    let anchor = document.createElement("a");
+    // Getting the content of anchor from data-nav attr of the section
+    anchor.textContent = "Section" + sectionCount;
+    // Adding href to the anchor
+    anchor.setAttribute("href", "#" + "section" + sectionCount);
+    // Adding style to the anchor
+    anchor.className = "menu__link";
+    // Appending the anchor to the list
+    newList.appendChild(anchor);
+    // Appending the new fregment to the DOM
+    document.body.querySelector("#navbar__list").appendChild(newList);
+
+    anchors = document.body.querySelectorAll("a");
+
+    //  add a click event to the new anchor
+    anchor.addEventListener('click', (e) => {
+      // Prevent the default action
+        e.preventDefault();
+        // Getting the value of href attribute
+        const href = anchor.getAttribute("href");
+        // Selecting the section with href value (id)
+        const section = document.querySelector(`${href}`);
+        // offsetTop property returns the distance of
+        // the outer border of the current element relative to
+        // the inner border of the top of the offsetParent.
+        const offsetTop = section.offsetTop;
+        // Window.scrollTo() scrolls to a particular set of coordinates in the document.
+        window.scrollTo({
+          // Specifies the number of pixels along the Y axis to scroll the window or element.
+          top: offsetTop,
+          // Animate smoothly (smooth)
+          behavior: 'smooth'
+        });
+    });
+
+    // if we're at collapsed page andded a new section change the header
+    if (document.querySelector(".main__hero h1").textContent === "Collapsed Landing Page") {
+      document.querySelector(".main__hero h1").textContent = "Landing Page";
+    }
 }
 
 /**
@@ -166,27 +241,29 @@ createMenu(sections);
 
 // Scroll to section on link click
 // Selecting all anchors that we have created before
-const anchors = document.querySelectorAll("a");
+anchors = document.querySelectorAll("a");
 // Looping through every anchor adding an addEventListener
 for (const anchor of anchors) {
   anchor.addEventListener('click', (e) => {
-    // Prevent the default action
-    e.preventDefault();
-    // Getting the value of href attribute
-    const href = anchor.getAttribute("href");
-    // Selecting the section with href value (id)
-    const section = document.querySelector(`${href}`);
-    // offsetTop property returns the distance of
-    // the outer border of the current element relative to
-    // the inner border of the top of the offsetParent.
-    const offsetTop = section.offsetTop;
-    // Window.scrollTo() scrolls to a particular set of coordinates in the document.
-    window.scrollTo({
-      // Specifies the number of pixels along the Y axis to scroll the window or element.
-      top: offsetTop,
-      // Animate smoothly (smooth)
-      behavior: 'smooth'
-    });
+    if (anchor){
+      // Prevent the default action
+      e.preventDefault();
+      // Getting the value of href attribute
+      const href = anchor.getAttribute("href");
+      // Selecting the section with href value (id)
+      const section = document.querySelector(`${href}`);
+      // offsetTop property returns the distance of
+      // the outer border of the current element relative to
+      // the inner border of the top of the offsetParent.
+      const offsetTop = section.offsetTop;
+      // Window.scrollTo() scrolls to a particular set of coordinates in the document.
+      window.scrollTo({
+        // Specifies the number of pixels along the Y axis to scroll the window or element.
+        top: offsetTop,
+        // Animate smoothly (smooth)
+        behavior: 'smooth'
+      });
+    }
   });
 }
 
@@ -201,3 +278,6 @@ upButton.addEventListener('click', scrollingUp);
 
 // Adding a click event to collapse anchor
 collapse.addEventListener('click', collapsePage);
+
+// Add a click event to add content button
+addButton.addEventListener('click', addContent);
