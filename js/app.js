@@ -190,7 +190,7 @@ let addContent = () => {
     // Creating an anchor element
     let anchor = document.createElement("a");
     // Getting the content of anchor from data-nav attr of the section
-    anchor.textContent = "Section" + sectionCount;
+    anchor.textContent = "Section " + sectionCount;
     // Adding href to the anchor
     anchor.setAttribute("href", "#" + "section" + sectionCount);
     // Adding style to the anchor
@@ -281,3 +281,10 @@ collapse.addEventListener('click', collapsePage);
 
 // Add a click event to add content button
 addButton.addEventListener('click', addContent);
+
+// selecting navbar menu
+let navbar = document.querySelector('.navbar__menu');
+// selecting menu btn and adding a click event to it
+document.querySelector('#menu-btn').addEventListener("click",  () =>{
+  navbar.classList.toggle('active');
+});
