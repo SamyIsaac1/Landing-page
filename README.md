@@ -29,3 +29,7 @@ section if you decide to collapse the page the collapse button will remove every
 2. Collapse button to remove all sections and the menu.
 
 3. setTimeout() to indicate when scrolling has stopped .I didn't add any action ,but you're free to add any action you want like changing CSS style ,hide menu, etc.
+
+4. add-content btn to add more sections and menu items.
+
+5. menu icon for more responsiveness 
