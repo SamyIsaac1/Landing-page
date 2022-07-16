@@ -32,4 +32,4 @@ section if you decide to collapse the page the collapse button will remove every
 
 4. add-content btn to add more sections and menu items.
 
-5. menu icon for more responsiveness 
+5. menu icon for more responsiveness.
